@@ -1,39 +1,4 @@
-#include <iostream> 
-#include <cmath>
-#include <complex>
-#include <stdexcept>
-
-template <class Ratio>
-
-class Polynomial {
-private:
-	Ratio* container;
-	size_t size;
-public:
-	Polynomial();
-	Polynomial(const size_t& size);
-	Polynomial(const Polynomial& _polynomial);
-	~Polynomial();
-
-	void Set_size(const size_t& new_size);
-	size_t Get_size() const;
-
-	Ratio* Get_container() const;
-
-	Ratio operator[](const size_t& index) const;
-	Polynomial operator+(Polynomial& summand);
-	Polynomial operator*(const Ratio& multiplier);
-	Polynomial operator-(Polynomial& deductible);
-	void operator=(const Polynomial& _polynomial);
-
-
-
-	void Add_element(const Ratio& elem, const size_t& index);
-	void Add_element(const std::complex<Ratio>& elem, size_t index);
-	void shrink_to_fit();
-	void expand(const size_t& new_size);
-};
-
+#include <include/polynomial/polynomial.h>
 
 template <class Ratio>
 
@@ -45,9 +10,6 @@ Polynomial<Ratio>::Polynomial() {
 template <class Ratio>
 
 Polynomial<Ratio>::Polynomial(const size_t& size) {
-	if (size < 0) {
-		throw std::runtime_error("Size must be positive");
-	}
 	this->container = new Ratio[size]();
 	this->size = size;
 }
@@ -64,7 +26,7 @@ Polynomial<Ratio>::Polynomial(const Polynomial& _polynomial) {
 
 template <class Ratio>
 
-Polynomial<Ratio>::~Polynomial() noexcept{
+Polynomial<Ratio>::~Polynomial() {
 	delete[] container;
 	container = nullptr;
 	size = 0;
@@ -73,9 +35,7 @@ Polynomial<Ratio>::~Polynomial() noexcept{
 template <class Ratio>
 
 void Polynomial<Ratio>::Set_size(const size_t& size) {
-	if (size < 0) {
-		throw std::runtime_error("Size must be positive");
-	}
+
 	this->size = size;
 }
 
@@ -98,9 +58,7 @@ Ratio* Polynomial<Ratio>::Get_container() const {
 template <class Ratio>
 
 Ratio Polynomial<Ratio>::operator[](const size_t& index) const {
-	if (index < 0 || index > size) {
-		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
-	}
+
 	return container[index];
 }
 
@@ -165,8 +123,11 @@ void Polynomial<Ratio>::operator=(const Polynomial& _polynomial) {
 template <class Ratio>
 
 void Polynomial<Ratio>::Add_element(const Ratio& elem, const size_t& index) {
-	if (index < 0 || index > size) {
-		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
+	if (index >= size) {
+		Polynomial _tmp(index + 1);
+		_tmp = *this;
+		this->size = index + 1;
+		*this = _tmp;
 	}
 	container[index] = elem;
 }
@@ -174,8 +135,11 @@ void Polynomial<Ratio>::Add_element(const Ratio& elem, const size_t& index) {
 template <class Ratio>
 
 void Polynomial<Ratio>::Add_element(const std::complex<Ratio>& elem, size_t index) {
-	if (index < 0 || index > size) {
-		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
+	if (index >= size) {
+		Polynomial _tmp(index + 1);
+		_tmp = *this;
+		this->size = index + 1;
+		*this = _tmp;
 	}
 	conteiner[index] = elem;
 }
@@ -208,9 +172,6 @@ void Polynomial<Ratio>::shrink_to_fit() {
 template <class Ratio>
 
 void Polynomial<Ratio>::expand(const size_t& new_size) {
-	if (new_size < 0) {
-		throw std::runtime_error("Size must be positive");
-	}
 	Ratio* new_container = new Ratio[new_size]();
 	for (size_t index = 0; index < size; index++) {
 		new_container[index] = container[index];
@@ -383,4 +344,9 @@ std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& 
 
 	}
 	return stream;
+}
+
+int main() {
+	Polynomial<int> pol1(4);
+	
 }
