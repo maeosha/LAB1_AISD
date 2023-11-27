@@ -228,4 +228,27 @@ Polynomial<std::complex<Ratio>> operator*(Ratio _multiplier, const Polynomial<st
 		value.Add_element(_polynomial[index] * _multiplier, index);
 	}
 	return value;
+}
 
+template <class Ratio, typename Args>
+
+Ratio Ñalculating_a_polynomial(const Polynomial<Ratio> _polynomial, const Args& value_x) {
+	Args summary = 0;
+	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
+		summary += _polynomial[index] * pow(value_x, index);
+	}
+	return Ratio(summary);
+}
+
+template <class Ratio>
+
+std::complex<Ratio> calculating_a_polynomial(Polynomial<std::complex<Ratio>> _polynomial, const std::complex<Ratio>& value_x) {
+	Ratio summary_re = 0;
+	Ratio summary_im = 0;
+	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
+		summary_re += _polynomial[index].real() * std::pow(value_x.real(), index);
+		summary_im += _polynomial[index].imag() * std::pow(value_x.imag(), index);
+	}
+	std::complex<Ratio> summary(summary_re, summary_im);
+	return summary;
+}
