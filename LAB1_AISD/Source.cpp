@@ -209,3 +209,23 @@ void Polynomial<Ratio>::expand(const size_t& new_size) {
 	container = new_container;
 	size = new_size;
 }
+
+template <class Ratio>
+
+Polynomial<Ratio> operator*(Ratio _multiplier, const Polynomial<Ratio>& _polynomial) {
+	Polynomial<Ratio> value(_polynomial.Get_size());
+	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
+		value.Add_element(_polynomial[index] * _multiplier, index);
+	}
+	return value;
+}
+
+template <class Ratio>
+
+Polynomial<std::complex<Ratio>> operator*(Ratio _multiplier, const Polynomial<std::complex<Ratio>>& _polynomial) {
+	Polynomial<std::complex<Ratio>> value(_polynomial.Get_size());
+	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
+		value.Add_element(_polynomial[index] * _multiplier, index);
+	}
+	return value;
+
