@@ -1,4 +1,4 @@
-#include <include/polynomial/polynomial.h>
+#include <polynomial/polynomial.h>
 
 template <class Ratio>
 
@@ -141,7 +141,7 @@ void Polynomial<Ratio>::Add_element(const std::complex<Ratio>& elem, size_t inde
 		this->size = index + 1;
 		*this = _tmp;
 	}
-	conteiner[index] = elem;
+	container[index] = elem;
 }
 
 template <class Ratio>
@@ -346,7 +346,3 @@ std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& 
 	return stream;
 }
 
-int main() {
-	Polynomial<int> pol1(4);
-	
-}

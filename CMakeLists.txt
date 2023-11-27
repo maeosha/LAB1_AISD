@@ -29,5 +29,5 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Объявляем тесты
-add_executable(functions_tests "tests/functions_tests.cc")
-target_link_libraries(functions_tests polynomial GTest::gtest_main)
+add_executable(polynomial_tests "tests/polynomial_tests.cc")
+target_link_libraries(polynomial_tests polynomial GTest::gtest_main)
