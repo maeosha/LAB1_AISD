@@ -8,5 +8,3 @@ TEST(PolynomialTests, Test_Add_elem) {
 
     EXPECT_EQ(pol1[1], 3);
 }
-
-

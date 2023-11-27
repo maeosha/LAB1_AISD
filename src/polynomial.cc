@@ -2,14 +2,10 @@
 
 template <class Ratio>
 
-Polynomial<Ratio>::Polynomial() {
-	this->container = new Ratio[1]();
-	this->size = 1;
-}
-
-template <class Ratio>
-
 Polynomial<Ratio>::Polynomial(const size_t& size) {
+	if (size < 0) {
+		throw std::runtime_error("Size must be positive");
+	}
 	this->container = new Ratio[size]();
 	this->size = size;
 }
@@ -35,7 +31,9 @@ Polynomial<Ratio>::~Polynomial() {
 template <class Ratio>
 
 void Polynomial<Ratio>::Set_size(const size_t& size) {
-
+	if (size < 0) {
+		throw std::runtime_error("Size must be positive");
+	}
 	this->size = size;
 }
 
@@ -53,12 +51,12 @@ Ratio* Polynomial<Ratio>::Get_container() const {
 	return container;
 }
 
-
-
 template <class Ratio>
 
 Ratio Polynomial<Ratio>::operator[](const size_t& index) const {
-
+	if (index < 0 || index > size) {
+		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
+	}
 	return container[index];
 }
 
@@ -119,15 +117,11 @@ void Polynomial<Ratio>::operator=(const Polynomial& _polynomial) {
 	this->size = _polynomial.Get_size();
 }
 
-
 template <class Ratio>
 
 void Polynomial<Ratio>::Add_element(const Ratio& elem, const size_t& index) {
-	if (index >= size) {
-		Polynomial _tmp(index + 1);
-		_tmp = *this;
-		this->size = index + 1;
-		*this = _tmp;
+	if (index < 0 || index > size) {
+		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
 	}
 	container[index] = elem;
 }
@@ -135,14 +129,12 @@ void Polynomial<Ratio>::Add_element(const Ratio& elem, const size_t& index) {
 template <class Ratio>
 
 void Polynomial<Ratio>::Add_element(const std::complex<Ratio>& elem, size_t index) {
-	if (index >= size) {
-		Polynomial _tmp(index + 1);
-		_tmp = *this;
-		this->size = index + 1;
-		*this = _tmp;
+	if (index < 0 || index > size) {
+		throw std::runtime_error("Degree must be positive and less, that degree polimomial");
 	}
 	container[index] = elem;
 }
+
 
 template <class Ratio>
 
@@ -172,6 +164,9 @@ void Polynomial<Ratio>::shrink_to_fit() {
 template <class Ratio>
 
 void Polynomial<Ratio>::expand(const size_t& new_size) {
+	if (new_size < 0) {
+		throw std::runtime_error("Size must be positive");
+	}
 	Ratio* new_container = new Ratio[new_size]();
 	for (size_t index = 0; index < size; index++) {
 		new_container[index] = container[index];
@@ -180,8 +175,6 @@ void Polynomial<Ratio>::expand(const size_t& new_size) {
 	container = new_container;
 	size = new_size;
 }
-
-
 
 template <class Ratio>
 
@@ -203,12 +196,9 @@ Polynomial<std::complex<Ratio>> operator*(Ratio _multiplier, const Polynomial<st
 	return value;
 }
 
-
-
-
 template <class Ratio, typename Args>
 
-Ratio Ñalculating_a_polynomial(const Polynomial<Ratio> _polynomial, const Args& value_x) {
+Ratio calculating_a_polynomial(const Polynomial<Ratio> _polynomial, const Args& value_x) {
 	Args summary = 0;
 	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
 		summary += _polynomial[index] * pow(value_x, index);
@@ -228,9 +218,6 @@ std::complex<Ratio> calculating_a_polynomial(Polynomial<std::complex<Ratio>> _po
 	std::complex<Ratio> summary(summary_re, summary_im);
 	return summary;
 }
-
-
-
 
 template <class Ratio>
 
@@ -257,9 +244,6 @@ Polynomial<std::complex<Ratio>>  calculating_derivative(const Polynomial<std::co
 	}
 	return derivative_polynomial;
 }
-
-
-
 
 template <class Ratio>
 
@@ -290,7 +274,6 @@ template <class Ratio>
 
 std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& _polynomial) {
 	std::complex<Ratio> zero_elem(0, 0);
-	char complex_stream_out;
 	Ratio complex_re;
 	Ratio complex_im;
 	if (_polynomial.Get_size() == 0) {
@@ -301,6 +284,7 @@ std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& 
 	if (_polynomial[0] != zero_elem) {
 		complex_re = _polynomial[0].real();
 		complex_im = _polynomial[0].imag();
+
 		if (complex_re == 0) {
 			stream << complex_im;
 		}
@@ -323,8 +307,9 @@ std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& 
 		if (_polynomial[index] == zero_elem) {
 			continue;
 		}
-		if (index != _polynomial.Get_size() - 1 && _polynomial[index - 1] != zero_elem) {
+		if (index != _polynomial.Get_size()) {
 			stream << " + ";
+
 		}
 		if (complex_re == 0) {
 			stream << complex_im << "i" << "*x^" << index;
@@ -346,3 +331,228 @@ std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& 
 	return stream;
 }
 
+
+int main() {
+	{
+		std::cout << "TEST 1'st: Test Add_elemend\n" << std::endl;
+		Polynomial<int> pol1(5);
+		pol1.Add_element(24, 0);
+		pol1.Add_element(23, 1);
+		pol1.Add_element(0, 2);
+		pol1.Add_element(3, 3);
+		pol1.Add_element(5, 4);
+		std::cout << pol1 << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 2'nd: Test Add_element(complex)\n" << std::endl;
+		Polynomial<std::complex<double>> pol1(5);
+		std::complex<double> elem1(1, 3);
+		std::complex<double> elem2(0, 2);
+		std::complex<double> elem3(0, 0);
+		pol1.Add_element(elem1, 0);
+		pol1.Add_element(elem2, 1);
+		pol1.Add_element(elem3, 2);
+		pol1.Add_element(elem1, 3);
+		pol1.Add_element(elem1, 4);
+		std::cout << pol1 << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 3'rd: Test operator+\n" << std::endl;
+		Polynomial<int> pol1(5);
+		Polynomial<int> pol2(3);
+		Polynomial<int> pol_summer(1);
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			pol1.Add_element(rand() % 10, index);
+		}
+
+		for (size_t index = 0; index < pol2.Get_size(); index++) {
+			pol2.Add_element(rand() % 10, index);
+		}
+
+		std::cout << "Polynomial 1: " << pol1 << std::endl << std::endl;
+		std::cout << "Polynomial 2: " << pol2 << std::endl << std::endl;
+
+		pol_summer = pol1 + pol2;
+		std::cout << "Pol1 + Pol2 = " << pol_summer << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 4'th: Test operator+(complex)\n" << std::endl;
+		Polynomial<std::complex<double>> pol1(5);
+		Polynomial<std::complex<double>> pol2(3);
+		Polynomial<std::complex<double>> pol_summer(1);
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			std::complex<double> elem(rand() % 10, rand() % 10);
+			pol1.Add_element(elem, index);
+		}
+
+		for (size_t index = 0; index < pol2.Get_size(); index++) {
+			std::complex<double> elem(rand() % 10, rand() % 10);
+			pol2.Add_element(elem, index);
+		}
+
+		std::cout << "Polynomial 1: " << pol1 << std::endl << std::endl;
+		std::cout << "Polynomial 2: " << pol2 << std::endl << std::endl;
+
+		pol_summer = pol1 + pol2;
+		std::cout << "Pol1 + Pol2 = " << pol_summer << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 5'th: Test operator*\n" << std::endl;
+		Polynomial<int> pol1(5);
+		int mult = rand() % 10;
+		Polynomial<int> pol_mult(1);
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			pol1.Add_element(rand() % 10, index);
+		}
+
+		std::cout << "Polynomial: " << pol1 << std::endl << std::endl;
+		std::cout << "multiplier: " << mult << std::endl << std::endl;
+
+		pol_mult = pol1 * mult;
+		std::cout << "Pol * mult = " << pol_mult << std::endl << std::endl;
+
+		pol_mult = mult * pol1;
+		std::cout << "mult * Pol = " << pol_mult << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 6'th: Test operator*(complex)\n" << std::endl;
+		Polynomial<std::complex<double>> pol1(5);
+		std::complex<double> mult(rand() % 10, rand() % 10);
+		Polynomial<std::complex<double>> pol_mult(1);
+
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			std::complex<double> elem(rand() % 10, rand() % 10);
+			pol1.Add_element(elem, index);
+		}
+
+		std::cout << "Polynomial: " << pol1 << std::endl << std::endl;
+		std::cout << "multiplier: " << mult << std::endl << std::endl;
+
+		pol_mult = pol1 * mult;
+		std::cout << "Pol * mult = " << pol_mult << std::endl << std::endl;
+
+		pol_mult = mult * pol1;
+		std::cout << "mult * Pol = " << pol_mult << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 7'th: Test operator-\n" << std::endl;
+		Polynomial<int> pol1(5);
+		Polynomial<int> pol2(3);
+		Polynomial<int> pol_ded(1);
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			pol1.Add_element(rand() % 10, index);
+		}
+
+		for (size_t index = 0; index < pol2.Get_size(); index++) {
+			pol2.Add_element(rand() % 10, index);
+		}
+
+		std::cout << "Polynomial 1: " << pol1 << std::endl << std::endl;
+		std::cout << "Polynomial 2: " << pol2 << std::endl << std::endl;
+
+		pol_ded = pol1 - pol2;
+		std::cout << "Pol1 - Pol2 = " << pol_ded << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 8'th: Test operator-(complex)\n" << std::endl;
+		Polynomial<std::complex<double>> pol1(5);
+		Polynomial<std::complex<double>> pol2(3);
+		Polynomial<std::complex<double>> pol_ded(1);
+		for (size_t index = 0; index < pol1.Get_size(); index++) {
+			std::complex<double> elem(rand() % 10, rand() % 10);
+			pol1.Add_element(elem, index);
+		}
+
+		for (size_t index = 0; index < pol2.Get_size(); index++) {
+			std::complex<double> elem(rand() % 10, rand() % 10);
+			pol2.Add_element(elem, index);
+		}
+
+		std::cout << "Polynomial 1: " << pol1 << std::endl << std::endl;
+		std::cout << "Polynomial 2: " << pol2 << std::endl << std::endl;
+
+		pol_ded = pol1 - pol2;
+		std::cout << "Pol1 - Pol2 = " << pol_ded << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 9'th: Test calculating_the_polynomial\n" << std::endl; 
+		Polynomial<int> pol(5);
+		int right_result = 31;
+		int arg = 2;
+		int result;
+
+		for (size_t index = 0; index < pol.Get_size(); index++) {
+			pol.Add_element(1, index);
+		}
+
+		std::cout << "Polynomial: " << pol << std::endl << std::endl;
+		std::cout << "Argument: " << arg << std::endl << std::endl;
+		
+		result = calculating_a_polynomial<int>(pol, arg);
+
+		std::cout << "Polynomial(Argument) = " << result << std::endl;
+		std::cout << "Right result: " << right_result << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 10'th: Test calculating_the_polynomial(complex)\n" << std::endl;
+		Polynomial<std::complex<double>> pol(5);
+		std::complex<double> right_result(5, 10);
+		std::complex<double> arg(1, 1);
+		std::complex<double> result;
+
+		for (size_t index = 0; index < pol.Get_size(); index++) {
+			std::complex<double> elem(1, index);
+			pol.Add_element(elem, index);
+		}
+
+		std::cout << "Polynomial: " << pol << std::endl << std::endl;
+		std::cout << "Argument: " << arg << std::endl << std::endl;
+
+		result = calculating_a_polynomial(pol, arg);
+
+		std::cout << "Polynomial(Argument) = " << result << std::endl;
+		std::cout << "Right result: " << right_result << std::endl << std::endl << std::endl;
+	}
+
+	{
+		std::cout << "TEST 11'th: Test calculating_the_derivative\n" << std::endl;
+		Polynomial<int> pol(5);
+		Polynomial<int> derivative_pol(5);
+
+		for (size_t index = 0; index < pol.Get_size(); index++) {
+			pol.Add_element(1, index);
+		}
+
+		std::cout << "Polynomial: " << pol << std::endl << std::endl;
+
+		derivative_pol = calculating_derivative<int>(pol);
+
+		std::cout << "(Pol)' = " << derivative_pol << std::endl;
+	}
+
+	{
+		std::cout << "TEST 12'th: Test calculating_the_derivative\n" << std::endl;
+		Polynomial<std::complex<double>> pol(5);
+		Polynomial<std::complex<double>> derivative_pol(5);
+
+		for (size_t index = 0; index < pol.Get_size(); index++) {
+			std::complex<double> elem(1, index);
+			pol.Add_element(elem, index);
+		}
+
+		std::cout << "Polynomial: " << pol << std::endl << std::endl;
+
+		derivative_pol = calculating_derivative(pol);
+
+		std::cout << "(Pol)' = " << derivative_pol << std::endl;
+	}
+}
