@@ -252,3 +252,29 @@ std::complex<Ratio> calculating_a_polynomial(Polynomial<std::complex<Ratio>> _po
 	std::complex<Ratio> summary(summary_re, summary_im);
 	return summary;
 }
+
+template <class Ratio>
+
+Polynomial<Ratio>  calculating_derivative(const Polynomial<Ratio>& polynomial) {
+	size_t size = polynomial.Get_size();
+	Polynomial<Ratio> derivative_polynomial(size - 1);
+	Ratio derivative_ratio;
+	for (size_t index = 1; index < size; index++) {
+		derivative_ratio = polynomial[index] * index;
+		derivative_polynomial.Add_element(derivative_ratio, index - 1);
+	}
+	return derivative_polynomial;
+}
+
+template <class Ratio>
+
+Polynomial<std::complex<Ratio>>  calculating_derivative(const Polynomial<std::complex<Ratio>>& polynomial) {
+	size_t size = polynomial.Get_size();
+	Polynomial<std::complex<Ratio>> derivative_polynomial(size - 1);
+	std::complex<Ratio> derivative_ratio;
+	for (size_t index = 1; index < size; index++) {
+		derivative_ratio = polynomial[index] * Ratio(index);
+		derivative_polynomial.Add_element(derivative_ratio, index - 1);
+	}
+	return derivative_polynomial;
+}
