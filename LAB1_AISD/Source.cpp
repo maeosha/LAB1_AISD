@@ -56,3 +56,24 @@ Polynomial<Ratio>::Polynomial(const Polynomial& _polynomial) {
 	}
 	this->size = _polynomial.Get_size();
 }
+
+template <class Ratio>
+
+void Polynomial<Ratio>::Set_size(const size_t& size) {
+
+	this->size = size;
+}
+
+template <class Ratio>
+
+size_t Polynomial<Ratio>::Get_size() const {
+
+	return size;
+}
+
+template <class Ratio>
+
+Ratio* Polynomial<Ratio>::Get_container() const {
+
+	return container;
+}
