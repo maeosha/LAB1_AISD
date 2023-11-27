@@ -148,6 +148,64 @@ void Polynomial<Ratio>::operator=(const Polynomial& _polynomial) {
 	this->size = _polynomial.Get_size();
 }
 
+template <class Ratio>
+
+void Polynomial<Ratio>::Add_element(const Ratio& elem, const size_t& index) {
+	if (index >= size) {
+		Polynomial _tmp(index + 1);
+		_tmp = *this;
+		this->size = index + 1;
+		*this = _tmp;
+	}
+	container[index] = elem;
+}
+
+template <class Ratio>
+
+void Polynomial<Ratio>::Add_element(const std::complex<Ratio>& elem, size_t index) {
+	if (index >= size) {
+		Polynomial _tmp(index + 1);
+		_tmp = *this;
+		this->size = index + 1;
+		*this = _tmp;
+	}
+	conteiner[index] = elem;
+}
 
 
+template <class Ratio>
 
+void Polynomial<Ratio>::shrink_to_fit() {
+	size_t shrinked_size = size;
+	size_t index = size - 1;
+
+	while (container[index] == 0) {
+		shrinked_size--;
+		index--;
+	}
+
+	if (size != shrinked_size) {
+		Ratio* shrinked_container = new Ratio[shrinked_size];
+
+		for (size_t index = 0; index < shrinked_size; index++) {
+			shrinked_container[index] = container[index];
+		}
+
+		delete[] container;
+		container = new Ratio[shrinked_size];
+		container = shrinked_container;
+		size = shrinked_size;
+	}
+}
+
+template <class Ratio>
+
+void Polynomial<Ratio>::expand(const size_t& new_size) {
+	Ratio* new_container = new Ratio[new_size]();
+	for (size_t index = 0; index < size; index++) {
+		new_container[index] = container[index];
+	}
+
+	container = new_container;
+	size = new_size;
+}
