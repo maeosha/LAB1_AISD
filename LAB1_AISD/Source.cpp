@@ -32,3 +32,27 @@ public:
 	void shrink_to_fit();
 	void expand(const size_t& new_size); 
 };
+
+template <class Ratio>
+
+Polynomial<Ratio>::Polynomial() {
+	this->container = new Ratio[1]();
+	this->size = 1;
+}
+
+template <class Ratio>
+
+Polynomial<Ratio>::Polynomial(const size_t& size) {
+	this->container = new Ratio[size]();
+	this->size = size;
+}
+
+template <class Ratio>
+
+Polynomial<Ratio>::Polynomial(const Polynomial& _polynomial) {
+	this->container = new Ratio[_polynomial.Get_size()];
+	for (size_t index = 0; index < _polynomial.Get_size(); index++) {
+		container[index] = _polynomial[index];
+	}
+	this->size = _polynomial.Get_size();
+}
