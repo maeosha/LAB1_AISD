@@ -278,3 +278,88 @@ Polynomial<std::complex<Ratio>>  calculating_derivative(const Polynomial<std::co
 	}
 	return derivative_polynomial;
 }
+
+template <class Ratio>
+
+std::ostream& operator<<(std::ostream& stream, Polynomial<Ratio>& _polynomial) {
+	if (_polynomial.Get_size() == 0) {
+		stream << "NONE";
+		return stream;
+	}
+	if (_polynomial[0] != 0) {
+		stream << _polynomial[0];
+	}
+	for (size_t index = 1; index < _polynomial.Get_size(); index++) {
+		if (_polynomial[index] == 0) {
+			continue;
+		}
+		if (_polynomial[index] > 0) {
+			stream << " + ";
+		}
+		if (_polynomial[index] < 0) {
+			stream << " - ";
+		}
+		stream << abs(_polynomial[index]) << "*x^" << index;
+	}
+	return stream;
+}
+
+template <class Ratio>
+
+std::ostream& operator<<(std::ostream& stream, Polynomial<std::complex<Ratio>>& _polynomial) {
+	std::complex<Ratio> zero_elem(0, 0);
+	char complex_stream_out;
+	Ratio complex_re;
+	Ratio complex_im;
+	if (_polynomial.Get_size() == 0) {
+		stream << "NONE";
+		return stream;
+	}
+
+	if (_polynomial[0] != zero_elem) {
+		complex_re = _polynomial[0].real();
+		complex_im = _polynomial[0].imag();
+		if (complex_re == 0) {
+			stream << complex_im;
+		}
+		if (complex_im == 0) {
+			stream << complex_re;
+		}
+		if (complex_re != 0 && complex_im != 0) {
+			if (complex_im > 0) {
+				stream << complex_re << " + " << complex_im << "i";
+			}
+			if (complex_im < 0) {
+				stream << complex_re << " - " << abs(complex_im) << "i";
+			}
+		}
+	}
+
+	for (size_t index = 1; index < _polynomial.Get_size(); index++) {
+		complex_re = _polynomial[index].real();
+		complex_im = _polynomial[index].imag();
+		if (_polynomial[index] == zero_elem) {
+			continue;
+		}
+		if (index != _polynomial.Get_size() - 1 && _polynomial[index - 1] != zero_elem) {
+			stream << " + ";
+		}
+		if (complex_re == 0) {
+			stream << complex_im << "i" << "*x^" << index;
+		}
+		if (complex_im == 0) {
+			stream << complex_re << "*x^" << index;
+		}
+
+		if (complex_re != 0 && complex_im != 0) {
+			if (complex_im > 0) {
+				stream << "(" << complex_re << " + " << complex_im << "i)" << "*x^" << index;
+			}
+			if (complex_im < 0) {
+				stream << "(" << complex_re << " - " << abs(complex_im) << "i)" << "*x^" << index;
+			}
+		}
+
+	}
+	return stream;
+}
