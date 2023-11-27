@@ -30,5 +30,5 @@ public:
 	void Add_element(const Ratio& elem, const size_t& index);
 	void Add_element(const std::complex<Ratio>& elem, size_t index);
 	void shrink_to_fit();
-	void expand(const size_t& new_size);
+	void expand(const size_t& new_size); 
 };
